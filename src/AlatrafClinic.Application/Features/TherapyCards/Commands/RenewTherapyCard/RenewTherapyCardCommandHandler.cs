@@ -5,13 +5,13 @@ using AlatrafClinic.Application.Features.TherapyCards.Mappers;
 using AlatrafClinic.Domain.Common.Results;
 using AlatrafClinic.Domain.Diagnosises;
 using AlatrafClinic.Domain.Diagnosises.Enums;
+using AlatrafClinic.Domain.MedicalPrograms;
 using AlatrafClinic.Domain.Payments;
 using AlatrafClinic.Domain.Services.Enums;
-using AlatrafClinic.Domain.Services.Tickets;
 using AlatrafClinic.Domain.TherapyCards;
 using AlatrafClinic.Domain.TherapyCards.Enums;
-using AlatrafClinic.Domain.TherapyCards.MedicalPrograms;
 using AlatrafClinic.Domain.TherapyCards.TherapyCardTypePrices;
+using AlatrafClinic.Domain.Tickets;
 
 using MediatR;
 

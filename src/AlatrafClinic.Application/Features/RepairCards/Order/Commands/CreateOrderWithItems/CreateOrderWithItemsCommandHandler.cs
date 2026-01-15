@@ -5,11 +5,14 @@ using AlatrafClinic.Application.Features.RepairCards.Dtos;
 using AlatrafClinic.Application.Features.RepairCards.Mappers;
 using AlatrafClinic.Domain.Common.Results;
 using AlatrafClinic.Domain.Inventory.Items;
-using AlatrafClinic.Domain.RepairCards.Orders;
 
 using MediatR;
 using AlatrafClinic.Application.Common.Errors;
+
+using AlatrafClinic.Domain.Orders;
+
 using Microsoft.EntityFrameworkCore;
+
 
 namespace AlatrafClinic.Application.Features.RepairCards.Commands.CreateOrderWithItems;
 

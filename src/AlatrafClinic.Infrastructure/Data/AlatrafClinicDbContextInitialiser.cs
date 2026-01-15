@@ -4,14 +4,14 @@ using AlatrafClinic.Domain.Diagnosises.InjuryReasons;
 using AlatrafClinic.Domain.Diagnosises.InjurySides;
 using AlatrafClinic.Domain.Diagnosises.InjuryTypes;
 using AlatrafClinic.Domain.Identity;
+using AlatrafClinic.Domain.IndustrialParts;
 using AlatrafClinic.Domain.Inventory.Units;
+using AlatrafClinic.Domain.MedicalPrograms;
 using AlatrafClinic.Domain.People;
-using AlatrafClinic.Domain.RepairCards.IndustrialParts;
 using AlatrafClinic.Domain.Reports;
 using AlatrafClinic.Domain.Services;
 using AlatrafClinic.Domain.Settings;
 using AlatrafClinic.Domain.TherapyCards.Enums;
-using AlatrafClinic.Domain.TherapyCards.MedicalPrograms;
 using AlatrafClinic.Domain.TherapyCards.TherapyCardTypePrices;
 using AlatrafClinic.Infrastructure.Identity;
 
@@ -444,8 +444,19 @@ public sealed class AlatrafClinicDbContextInitialiser
             );
         }
 
+        if (!await _context.Addresses.AnyAsync())
+        {
+            _context.Addresses.AddRange(
+                Address.Create(1, "تعز").Value,
+                Address.Create(2, "صنعاء").Value,
+                Address.Create(3, "الحديدة").Value
+            );
+
+            await _context.SaveChangesAsync();
+        } 
+
         var birthdate = new DateOnly(2004,11,03);
-        var person = Person.Create("عبدالكريم شوقي", birthdate, "782422822", null, "صنعاء", true).Value;
+        var person = Person.Create("عبدالكريم شوقي", birthdate, "782422822", null, 1, true).Value;
 
         if(!await _context.People.AnyAsync())
         {
@@ -829,6 +840,307 @@ public sealed class AlatrafClinicDbContextInitialiser
                     CreatedAt = now,
                     UpdatedAt = now
                 },
+                new ReportField
+                {
+                    DomainId = reportDomain.Id,
+                    FieldKey = "patient_injury_reason_id",
+                    DisplayName = "رقم سبب الإصابة",
+                    TableName = "InjuryReasons",
+                    ColumnName = "InjuryReasonId",
+                    DataType = "int",
+                    IsFilterable = true,
+                    IsSortable = true,
+                    IsActive = true,
+                    DisplayOrder = 15,
+                    CreatedAt = now,
+                    UpdatedAt = now
+                },
+                new ReportField
+                {
+                    DomainId = reportDomain.Id,
+                    FieldKey = "patient_injury_reason",
+                    DisplayName = "سبب الإصابة",
+                    TableName = "InjuryReasons",
+                    ColumnName = "Name",
+                    DataType = "nvarchar(200)",
+                    IsFilterable = true,
+                    IsSortable = true,
+                    IsActive = true,
+                    DisplayOrder = 16,
+                    CreatedAt = now,
+                    UpdatedAt = now
+                },
+                new ReportField
+                {
+                    DomainId = reportDomain.Id,
+                    FieldKey = "patient_injury_type_id",
+                    DisplayName = "رقم نوع الإصابة",
+                    TableName = "InjuryTypes",
+                    ColumnName = "InjuryTypeId",
+                    DataType = "int",
+                    IsFilterable = true,
+                    IsSortable = true,
+                    IsActive = true,
+                    DisplayOrder = 17,
+                    CreatedAt = now,
+                    UpdatedAt = now
+                },
+                new ReportField
+                {
+                    DomainId = reportDomain.Id,
+                    FieldKey = "patient_injury_type",
+                    DisplayName = "نوع الإصابة",
+                    TableName = "InjuryTypes",
+                    ColumnName = "Name",
+                    DataType = "nvarchar(200)",
+                    IsFilterable = true,
+                    IsSortable = true,
+                    IsActive = true,
+                    DisplayOrder = 18,
+                    CreatedAt = now,
+                    UpdatedAt = now
+                },
+                new ReportField
+                {
+                    DomainId = reportDomain.Id,
+                    FieldKey = "patient_injury_side_id",
+                    DisplayName = "رقم جهة الإصابة",
+                    TableName = "InjurySides",
+                    ColumnName = "InjurySideId",
+                    DataType = "int",
+                    IsFilterable = true,
+                    IsSortable = true,
+                    IsActive = true,
+                    DisplayOrder = 19,
+                    CreatedAt = now,
+                    UpdatedAt = now
+                },
+                new ReportField
+                {
+                    DomainId = reportDomain.Id,
+                    FieldKey = "patient_injury_side",
+                    DisplayName = "جهة الإصابة",
+                    TableName = "InjurySides",
+                    ColumnName = "Name",
+                    DataType = "nvarchar(200)",
+                    IsFilterable = true,
+                    IsSortable = true,
+                    IsActive = true,
+                    DisplayOrder = 20,
+                    CreatedAt = now,
+                    UpdatedAt = now
+                },
+                new ReportField
+                {
+                    DomainId = reportDomain.Id,
+                    FieldKey = "patient_therapycard_id",
+                    DisplayName = "رقم كرت العلاج",
+                    TableName = "TherapyCards",
+                    ColumnName = "TherapyCardId",
+                    DataType = "int",
+                    IsFilterable = true,
+                    IsSortable = true,
+                    IsActive = true,
+                    DisplayOrder = 21,
+                    CreatedAt = now,
+                    UpdatedAt = now
+                },
+                new ReportField
+                {
+                    DomainId = reportDomain.Id,
+                    FieldKey = "patient_therapycard_type",
+                    DisplayName = "نوع كرت العلاج",
+                    TableName = "TherapyCards",
+                    ColumnName = "Type",
+                    DataType = "nvarchar(50)",
+                    IsFilterable = true,
+                    IsSortable = true,
+                    IsActive = true,
+                    DisplayOrder = 22,
+                    CreatedAt = now,
+                    UpdatedAt = now
+                },
+                new ReportField
+                {
+                    DomainId = reportDomain.Id,
+                    FieldKey = "patient_therapycard_session_price",
+                    DisplayName = "سعر الجلسة",
+                    TableName = "TherapyCards",
+                    ColumnName = "SessionPricePerType",
+                    DataType = "decimal(18,2)",
+                    IsFilterable = true,
+                    IsSortable = true,
+                    IsActive = true,
+                    DisplayOrder = 23,
+                    CreatedAt = now,
+                    UpdatedAt = now
+                },
+                new ReportField
+                {
+                    DomainId = reportDomain.Id,
+                    FieldKey = "patient_therapycard_start_date",
+                    DisplayName = "بداية البرنامج",
+                    TableName = "TherapyCards",
+                    ColumnName = "ProgramStartDate",
+                    DataType = "date",
+                    IsFilterable = true,
+                    IsSortable = true,
+                    IsActive = true,
+                    DisplayOrder = 24,
+                    CreatedAt = now,
+                    UpdatedAt = now
+                },
+                 new ReportField
+                {
+                    DomainId = reportDomain.Id,
+                    FieldKey = "patient_therapycard_end_date",
+                    DisplayName = "نهاية البرنامج",
+                    TableName = "TherapyCards",
+                    ColumnName = "ProgramEndDate",
+                    DataType = "date",
+                    IsFilterable = true,
+                    IsSortable = true,
+                    IsActive = true,
+                    DisplayOrder = 25,
+                    CreatedAt = now,
+                    UpdatedAt = now
+                },
+                
+                new ReportField
+                {
+                    DomainId = reportDomain.Id,
+                    FieldKey = "patient_repair_card_id",
+                    DisplayName = "رقم كرت الاصلاح",
+                    TableName = "RepairCards",
+                    ColumnName = "RepairCardId",
+                    DataType = "int",
+                    IsFilterable = true,
+                    IsSortable = true,
+                    IsActive = true,
+                    DisplayOrder = 26,
+                    CreatedAt = now,
+                    UpdatedAt = now
+                },
+                 new ReportField
+                {
+                    DomainId = reportDomain.Id,
+                    FieldKey = "patient_repair_card_status",
+                    DisplayName = "حالة كرت الاصلاح",
+                    TableName = "RepairCards",
+                    ColumnName = "Status",
+                    DataType = "nvarchar(50)",
+                    IsFilterable = true,
+                    IsSortable = true,
+                    IsActive = true,
+                    DisplayOrder = 27,
+                    CreatedAt = now,
+                    UpdatedAt = now
+                },
+                 new ReportField
+                {
+                    DomainId = reportDomain.Id,
+                    FieldKey = "patient_payment_id",
+                    DisplayName = "رقم الدفع",
+                    TableName = "Payments",
+                    ColumnName = "PaymentId",
+                    DataType = "int",
+                    IsFilterable = true,
+                    IsSortable = true,
+                    IsActive = true,
+                    DisplayOrder = 28,
+                    CreatedAt = now,
+                    UpdatedAt = now
+                },
+                 new ReportField
+                {
+                    DomainId = reportDomain.Id,
+                    FieldKey = "patient_payment_account_kind",
+                    DisplayName = "نوع الحساب",
+                    TableName = "Payments",
+                    ColumnName = "AccountKind",
+                    DataType = "nvarchar(50)",
+                    IsFilterable = true,
+                    IsSortable = true,
+                    IsActive = true,
+                    DisplayOrder = 29,
+                    CreatedAt = now,
+                    UpdatedAt = now
+                },
+                 new ReportField
+                {
+                    DomainId = reportDomain.Id,
+                    FieldKey = "patient_payment_total_amount",
+                    DisplayName = "السعر الكلي",
+                    TableName = "Payments",
+                    ColumnName = "TotalAmount",
+                    DataType = "decimal(18,2)",
+                    IsFilterable = true,
+                    IsSortable = true,
+                    IsActive = true,
+                    DisplayOrder = 30,
+                    CreatedAt = now,
+                    UpdatedAt = now
+                },
+                  new ReportField
+                {
+                    DomainId = reportDomain.Id,
+                    FieldKey = "patient_payment_paid_amount",
+                    DisplayName = "المبلغ المدفوع",
+                    TableName = "Payments",
+                    ColumnName = "PaidAmount",
+                    DataType = "decimal(18,2)",
+                    IsFilterable = true,
+                    IsSortable = true,
+                    IsActive = true,
+                    DisplayOrder = 31,
+                    CreatedAt = now,
+                    UpdatedAt = now
+                },
+                new ReportField
+                {
+                    DomainId = reportDomain.Id,
+                    FieldKey = "patient_payment_discount_amount",
+                    DisplayName = "المبلغ المخصوم",
+                    TableName = "Payments",
+                    ColumnName = "DiscountAmount",
+                    DataType = "decimal(18,2)",
+                    IsFilterable = true,
+                    IsSortable = true,
+                    IsActive = true,
+                    DisplayOrder = 32,
+                    CreatedAt = now,
+                    UpdatedAt = now
+                },
+                new ReportField
+                {
+                    DomainId = reportDomain.Id,
+                    FieldKey = "patient_payment_is_complete",
+                    DisplayName = "اكتمال الدفع",
+                    TableName = "Payments",
+                    ColumnName = "IsComplete",
+                    DataType = "bit",
+                    IsFilterable = true,
+                    IsSortable = true,
+                    IsActive = true,
+                    DisplayOrder = 33,
+                    CreatedAt = now,
+                    UpdatedAt = now
+                },
+                new ReportField
+                {
+                    DomainId = reportDomain.Id,
+                    FieldKey = "patient_payment_date",
+                    DisplayName = "تاريخ الدفع",
+                    TableName = "Payments",
+                    ColumnName = "PaymentDate",
+                    DataType = "datetime",
+                    IsFilterable = true,
+                    IsSortable = true,
+                    IsActive = true,
+                    DisplayOrder = 34,
+                    CreatedAt = now,
+                    UpdatedAt = now
+                },
             };
 
             _context.ReportFields.AddRange(reportFields);
@@ -897,6 +1209,123 @@ public sealed class AlatrafClinicDbContextInitialiser
                     IsActive = true,
                     IsRequired = true,
                     JoinOrder = 2,
+                    CreatedAt = now,
+                    UpdatedAt = now
+                },
+                new ReportJoin
+                {
+                    DomainId = reportDomain.Id,
+                    FromTable = "Diagnoses",
+                    ToTable = "DiagnosisInjuryReason",
+                    JoinType = "LEFT",
+                    JoinCondition = "Diagnoses.DiagnoseId = DiagnosisInjuryReason.DiagnoseId",
+                    IsActive = true,
+                    IsRequired = true,
+                    JoinOrder = 3,
+                    CreatedAt = now,
+                    UpdatedAt = now
+                },
+                new ReportJoin
+                {
+                    DomainId = reportDomain.Id,
+                    FromTable = "DiagnosisInjuryReason",
+                    ToTable = "InjuryReasons",
+                    JoinType = "LEFT",
+                    JoinCondition = "DiagnosisInjuryReason.InjuryReasonId = InjuryReasons.InjuryReasonId",
+                    IsActive = true,
+                    IsRequired = true,
+                    JoinOrder = 4,
+                    CreatedAt = now,
+                    UpdatedAt = now
+                },
+                new ReportJoin
+                {
+                    DomainId = reportDomain.Id,
+                    FromTable = "Diagnoses",
+                    ToTable = "DiagnosisInjurySide",
+                    JoinType = "LEFT",
+                    JoinCondition = "Diagnoses.DiagnoseId = DiagnosisInjurySide.DiagnoseId",
+                    IsActive = true,
+                    IsRequired = true,
+                    JoinOrder = 3,
+                    CreatedAt = now,
+                    UpdatedAt = now
+                },
+                new ReportJoin
+                {
+                    DomainId = reportDomain.Id,
+                    FromTable = "DiagnosisInjurySide",
+                    ToTable = "InjurySides",
+                    JoinType = "LEFT",
+                    JoinCondition = "DiagnosisInjurySide.InjurySideId = InjurySides.InjurySideId",
+                    IsActive = true,
+                    IsRequired = true,
+                    JoinOrder = 4,
+                    CreatedAt = now,
+                    UpdatedAt = now
+                },
+                new ReportJoin
+                {
+                    DomainId = reportDomain.Id,
+                    FromTable = "Diagnoses",
+                    ToTable = "DiagnosisInjuryType",
+                    JoinType = "LEFT",
+                    JoinCondition = "Diagnoses.DiagnoseId = DiagnosisInjuryType.DiagnoseId",
+                    IsActive = true,
+                    IsRequired = true,
+                    JoinOrder = 3,
+                    CreatedAt = now,
+                    UpdatedAt = now
+                },
+                new ReportJoin
+                {
+                    DomainId = reportDomain.Id,
+                    FromTable = "DiagnosisInjuryType",
+                    ToTable = "InjuryTypes",
+                    JoinType = "LEFT",
+                    JoinCondition = "DiagnosisInjuryType.InjuryTypeId = InjuryTypes.InjuryTypeId",
+                    IsActive = true,
+                    IsRequired = true,
+                    JoinOrder = 4,
+                    CreatedAt = now,
+                    UpdatedAt = now
+                },
+                new ReportJoin
+                {
+                    DomainId = reportDomain.Id,
+                    FromTable = "Diagnoses",
+                    ToTable = "TherapyCards",
+                    JoinType = "LEFT",
+                    JoinCondition = "Diagnoses.DiagnoseId = TherapyCards.DiagnosisId",
+                    IsActive = true,
+                    IsRequired = false,
+                    JoinOrder = 3,
+                    CreatedAt = now,
+                    UpdatedAt = now
+                },
+                new ReportJoin
+                {
+                    DomainId = reportDomain.Id,
+                    FromTable = "Diagnoses",
+                    ToTable = "RepairCards",
+                    JoinType = "LEFT",
+                    JoinCondition = "Diagnoses.DiagnoseId = RapairCards.DiagnosisId",
+                    IsActive = true,
+                    IsRequired = false,
+                    JoinOrder = 3,
+                    CreatedAt = now,
+                    UpdatedAt = now
+                },
+                new ReportJoin
+                {
+                    DomainId = reportDomain.Id,
+                    FromTable = "Diagnoses",
+                    ToTable = "Payments",
+                    JoinType = "LEFT",
+                    JoinCondition = "Diagnoses.DiagnoseId = Payments.DiagnosisId",
+                    IsActive = true,
+                    IsRequired = false,
+                    JoinOrder = 3,
                     CreatedAt = now,
                     UpdatedAt = now
                 },

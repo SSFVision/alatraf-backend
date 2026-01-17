@@ -35,12 +35,28 @@ public class PrintRepairCardCommandHandler
         .Include(r => r.Diagnosis)
         .ThenInclude(d => d.Patient)
             .ThenInclude(p => p.Person)
-        .Include(r => r.Diagnosis)
-        .ThenInclude(d => d.DiagnosisIndustrialParts)
-            .ThenInclude(dip => dip.IndustrialPartUnit)
-                .ThenInclude(ipu => ipu.IndustrialPart)
+        .Include(r=> r.DiagnosisIndustrialParts)
+            .ThenInclude(i=> i.IndustrialPartUnit)
+                .ThenInclude(u=> u.IndustrialPart)
+        .Include(r=> r.DiagnosisIndustrialParts)
+            .ThenInclude(i=> i.IndustrialPartUnit)
+                .ThenInclude(u=> u.Unit)
+        .Include(r => r.DiagnosisIndustrialParts)
+            .ThenInclude(i => i.DoctorSectionRoom!)
+                .ThenInclude(d => d.Section)
+        .Include(r => r.DiagnosisIndustrialParts)
+            .ThenInclude(i => i.DoctorSectionRoom!)
+                .ThenInclude(d => d.Doctor)
+                    .ThenInclude(doc => doc.Person)
         .Include(r => r.Diagnosis)
             .ThenInclude(d=> d.Payments)
+                .ThenInclude(p=> p.PatientPayment)
+        .Include(r => r.Diagnosis)
+            .ThenInclude(d=> d.Payments)
+                .ThenInclude(p=> p.WoundedPayment)
+        .Include(r => r.Diagnosis)
+            .ThenInclude(d=> d.Payments)
+                .ThenInclude(p=> p.DisabledPayment)
         .FirstOrDefaultAsync(r=> r.Id == command.RepairCardId, ct);
 
         if (repairCard is null)
@@ -49,9 +65,10 @@ public class PrintRepairCardCommandHandler
                 $"كرت الاصلاح بالمعرف {command.RepairCardId} غير موجود.");
         }
 
-        if (!repairCard.IsPrintable)
+        if (repairCard.Status is Domain.RepairCards.Enums.RepairCardStatus.New )
         {
-            return Error.Failure("كرت الاصلاح غير متاح للطباعة");
+            return Error.Conflict("RepairCardNotAssigned",
+                "لا يمكن طباعة كرت الاصلاح قبل تعيينه لفني.");
         }
 
         var printedDocument =
@@ -67,7 +84,7 @@ public class PrintRepairCardCommandHandler
         var printContext = new PrintContext
         {
             PrintNumber = printNumber,
-            PrintedAt = DateTime.UtcNow
+            PrintedAt = DateTime.Now
         };
 
         try
